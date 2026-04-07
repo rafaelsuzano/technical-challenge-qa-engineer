@@ -32,6 +32,7 @@ export default function TaskForm({ onCreate }: Props) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Adicionar nova tarefa..."
+          aria-label="Título da nova tarefa"
           disabled={isSubmitting}
           style={{
             flex: 1,
@@ -45,6 +46,7 @@ export default function TaskForm({ onCreate }: Props) {
         <button
           type="submit"
           data-testid="task-submit-button"
+          aria-label="Adicionar tarefa"
           disabled={isSubmitting}
           style={{
             padding: '10px 20px',

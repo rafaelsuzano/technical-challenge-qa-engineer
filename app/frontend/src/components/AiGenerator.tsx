@@ -52,6 +52,7 @@ export default function AiGenerator({ onTasksAdded }: Props) {
         type="password"
         value={apiKey}
         onChange={(e) => setApiKey(e.target.value)}
+        aria-label="API Key do OpenRouter"
         placeholder="Sua API Key do OpenRouter (sk-or-v1-...)"
         style={{
           width: '100%',
@@ -71,6 +72,7 @@ export default function AiGenerator({ onTasksAdded }: Props) {
           type="text"
           value={objective}
           onChange={(e) => setObjective(e.target.value)}
+          aria-label="Objetivo para gerar tarefas com IA"
           placeholder="Ex: Lançar um novo produto de software"
           onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
           style={{
@@ -84,7 +86,9 @@ export default function AiGenerator({ onTasksAdded }: Props) {
         />
         {/* BUG-010: Botão não é desabilitado durante loading — cliques múltiplos disparam chamadas duplicadas */}
         <button
+          type="button"
           data-testid="ai-generate-button"
+          aria-label="Gerar tarefas com IA"
           onClick={handleGenerate}
           style={{
             padding: '10px 20px',

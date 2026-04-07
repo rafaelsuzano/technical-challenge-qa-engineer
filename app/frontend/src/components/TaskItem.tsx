@@ -29,6 +29,7 @@ export default function TaskItem({ task, onToggle, onDelete }: Props) {
         type="checkbox"
         checked={task.isCompleted}
         onChange={() => onToggle(task.id)}
+        aria-label={task.isCompleted ? `Marcar como pendente: ${task.title}` : `Marcar como concluída: ${task.title}`}
         style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#2563eb' }}
       />
 
@@ -61,9 +62,10 @@ export default function TaskItem({ task, onToggle, onDelete }: Props) {
         </span>
       )}
 
-      {/* BUG-013: Botões de ação sem aria-label — leitores de tela anunciam apenas "botão" */}
       <button
+        type="button"
         data-testid="task-delete-button"
+        aria-label={`Excluir tarefa: ${task.title}`}
         onClick={() => onDelete(task.id)}
         style={{
           background: 'none',
