@@ -25,7 +25,6 @@ test.describe('Conclusão de tarefa (RF-03)', () => {
   });
 
   test('persistência do estado concluído após reload (PATCH no backend)', async ({ page, passo }) => {
-    test.fail(true, 'BUG-001: toggle não persiste — remover test.fail após corrigir useTasks.toggleComplete');
     const title = `[e2e] persist-toggle ${Date.now()}`;
     await passo('Criar tarefa e marcar concluída', async () => {
       await page.goto('/');

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { apiBaseURL } from '../lib/config';
-import type { TaskDto } from '../lib/task-types';
+import { apiBaseURL } from '../fixtures/config';
+import type { TaskDto } from '../fixtures/task-types';
+import { expectTaskDtoShape } from '../fixtures/task-schema';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -8,18 +9,23 @@ test.describe('Contrato API /tasks', () => {
   test('GET lista tarefas', async ({ request }) => {
     const res = await request.get(`${apiBaseURL}/tasks`);
     expect(res.ok()).toBeTruthy();
-    const data = (await res.json()) as TaskDto[];
+    const data = await res.json();
     expect(Array.isArray(data)).toBeTruthy();
+    for (const item of data as unknown[]) {
+      expectTaskDtoShape(item);
+    }
   });
 
   test('DELETE remove tarefa criada', async ({ request }) => {
     const title = `[e2e-api-del] ${Date.now()}`;
     const create = await request.post(`${apiBaseURL}/tasks`, { data: { title } });
     expect(create.status()).toBe(201);
-    const task = (await create.json()) as TaskDto;
-    const del = await request.delete(`${apiBaseURL}/tasks/${task.id}`);
+    const task = await create.json();
+    expectTaskDtoShape(task, { isAiGenerated: false });
+    const taskDto = task as TaskDto;
+    const del = await request.delete(`${apiBaseURL}/tasks/${taskDto.id}`);
     expect(del.status()).toBe(204);
-    const getOne = await request.get(`${apiBaseURL}/tasks/${task.id}`);
+    const getOne = await request.get(`${apiBaseURL}/tasks/${taskDto.id}`);
     expect(getOne.status()).toBe(404);
   });
 

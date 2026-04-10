@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/tasks.fixture';
 import { TaskFormPage } from '../pages/TaskFormPage';
 import { TaskListPage } from '../pages/TaskListPage';
-import { apiBaseURL } from '../lib/config';
+import { apiBaseURL } from '../fixtures/config';
 
 test.describe('Erros de API (UI)', () => {
   test('falha no POST /tasks: lista não deve crescer de forma inconsistente sob intercept', async ({

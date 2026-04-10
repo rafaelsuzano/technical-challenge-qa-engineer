@@ -4,8 +4,8 @@ import {
   type APIRequestContext,
   type TestInfo,
 } from '@playwright/test';
-import { apiBaseURL } from '../lib/config';
-import type { TaskDto } from '../lib/task-types';
+import { apiBaseURL } from './config';
+import type { TaskDto } from './task-types';
 
 async function fetchAllTasks(request: APIRequestContext): Promise<TaskDto[]> {
   const res = await request.get(`${apiBaseURL}/tasks`);

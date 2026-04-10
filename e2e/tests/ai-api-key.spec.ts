@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/tasks.fixture';
 import { AiGeneratorPage } from '../pages/AiGeneratorPage';
-import { tokenAIApi } from '../lib/config';
+import { tokenAIApi } from '../fixtures/config';
 
 test.describe('Campo API Key (IA)', () => {
   test('ai-api-key-input aceita e mantém o valor de tokenAIApi do .env', async ({ page, passo }) => {

@@ -27,13 +27,23 @@ export function useTasks() {
     setTasks((prev) => [...prev, data]);
   };
 
-  // BUG-001: toggleComplete atualiza apenas o estado local.
-  // A chamada PATCH /tasks/:id está ausente — o estado não é persistido no banco.
-  // Após recarregar a página, a tarefa volta ao estado original.
   const toggleComplete = async (id: string) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+    const nextCompleted = !task.isCompleted;
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, isCompleted: !t.isCompleted } : t)),
+      prev.map((t) => (t.id === id ? { ...t, isCompleted: nextCompleted } : t)),
     );
+    try {
+      const { data } = await api.patch<Task>(`/tasks/${id}`, {
+        isCompleted: nextCompleted,
+      });
+      setTasks((prev) => prev.map((t) => (t.id === id ? data : t)));
+    } catch {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, isCompleted: task.isCompleted } : t)),
+      );
+    }
   };
 
   const deleteTask = async (id: string) => {

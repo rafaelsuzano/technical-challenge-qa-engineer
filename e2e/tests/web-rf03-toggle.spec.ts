@@ -3,21 +3,25 @@ import { TaskFormPage } from '../pages/TaskFormPage';
 import { TaskListPage } from '../pages/TaskListPage';
 
 test.describe('RF-03 — Checkbox e feedback visual', () => {
-  test('desmarcar tarefa remove o estado concluído na UI', async ({ page }) => {
+  test('desmarcar tarefa remove o estado concluído na UI', async ({ page, passo }) => {
     const title = `[e2e] RF03 uncheck ${Date.now()}`;
-    await page.goto('/');
-    const form = new TaskFormPage(page);
-    const list = new TaskListPage(page);
-    await form.createTask(title);
+    await passo('Criar tarefa', async () => {
+      await page.goto('/');
+      const form = new TaskFormPage(page);
+      const list = new TaskListPage(page);
+      await form.createTask(title);
+    });
+    await passo('Marcar concluída e desmarcar — estilo riscado', async () => {
+      const list = new TaskListPage(page);
+      const cb = list.checkboxForTitle(title);
+      const titleEl = list.taskRowByTitle(title).getByTestId('task-title');
+      await cb.check();
+      await expect(cb).toBeChecked();
+      await expect(titleEl).toHaveCSS('text-decoration', /line-through/);
 
-    const cb = list.checkboxForTitle(title);
-    const titleEl = list.taskRowByTitle(title).getByTestId('task-title');
-    await cb.check();
-    await expect(cb).toBeChecked();
-    await expect(titleEl).toHaveCSS('text-decoration', /line-through/);
-
-    await cb.uncheck();
-    await expect(cb).not.toBeChecked();
-    await expect(titleEl).not.toHaveCSS('text-decoration', /line-through/);
+      await cb.uncheck();
+      await expect(cb).not.toBeChecked();
+      await expect(titleEl).not.toHaveCSS('text-decoration', /line-through/);
+    });
   });
 });

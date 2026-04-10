@@ -6,12 +6,14 @@ Auditoria baseada na implementação em `app/frontend` e `app/backend` (NestJS +
 
 [BUG-001] Alternar “concluída” não persiste no backend
 
+**Status:** Corrigido no frontend — `toggleComplete` passou a chamar `PATCH /tasks/:id` com `isCompleted` e reverte o estado local em caso de erro (ver `useTasks.ts`).
+
 Severidade: Crítica  
 Prioridade: P1  
 Componente: Frontend
 
-Descrição  
-`toggleComplete` em `useTasks.ts` apenas altera o estado React; não chama `PATCH /tasks/:id`. Ao recarregar a página, o checkbox volta ao valor armazenado no SQLite.
+Descrição (histórico)  
+`toggleComplete` em `useTasks.ts` apenas alterava o estado React; não chamava `PATCH /tasks/:id`. Ao recarregar a página, o checkbox voltava ao valor armazenado no SQLite.
 
 Passos para Reproduzir  
 1. Subir stack (Docker Compose) e abrir `http://localhost:3000`.  

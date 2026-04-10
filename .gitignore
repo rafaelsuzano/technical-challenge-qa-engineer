@@ -1,13 +1,2 @@
-# Env com credenciais reais
-app/.env
-
-# Node
-node_modules/
-**/node_modules/
-
-# Next.js build
-**/.next/
-
-# SQLite data
-*.db
-*.sqlite
+e2e/playwright-report/data/**/*.png
+e2e/playwright-report/data/**/*.webm

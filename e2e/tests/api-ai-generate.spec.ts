@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { apiBaseURL, tokenAIApi } from '../lib/config';
-import type { TaskDto } from '../lib/task-types';
+import { apiBaseURL, tokenAIApi } from '../fixtures/config';
+import type { TaskDto } from '../fixtures/task-types';
+import { expectTaskDtoShape } from '../fixtures/task-schema';
 
 /**
  * Contrato HTTP de `POST /ai/generate` (equivalente ao curl no Swagger / OpenAPI).
@@ -44,17 +45,15 @@ test.describe('Contrato API POST /ai/generate', () => {
     });
 
     expect(res.status(), await res.text()).toBe(201);
-    const body = (await res.json()) as TaskDto[];
+    const body = await res.json();
     expect(Array.isArray(body)).toBeTruthy();
-    expect(body.length).toBeGreaterThan(0);
-    for (const t of body) {
-      expect(t.id).toBeTruthy();
-      expect(t.title).toBeTruthy();
-      expect(t.isAiGenerated).toBe(true);
+    expect((body as unknown[]).length).toBeGreaterThan(0);
+    for (const item of body as unknown[]) {
+      expectTaskDtoShape(item, { isAiGenerated: true });
     }
 
     await Promise.all(
-      body.map((t) => request.delete(`${apiBaseURL}/tasks/${t.id}`)),
+      (body as TaskDto[]).map((t) => request.delete(`${apiBaseURL}/tasks/${t.id}`)),
     );
   });
 });

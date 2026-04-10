@@ -176,15 +176,22 @@ TaskFormPage.ts
 AiGeneratorPage.ts
 fixtures/
 tasks.fixture.ts
+config.ts
+task-types.ts
+fake-tasks.ts
+task-schema.ts
+tasks-post-scenarios.json
 tests/
 task-creation.spec.ts
 task-completion.spec.ts
 task-deletion.spec.ts
 empty-state.spec.ts
 error-handling.spec.ts
+(+ outros specs: api-*, web-*, accessibility, ai-api-key, task-validation)
 playwright.config.ts
 package.json
 README.md
+ACCESSIBILITY-FINDINGS.md
 \`\`\`
 
 ### Comandos que o avaliador vai executar
