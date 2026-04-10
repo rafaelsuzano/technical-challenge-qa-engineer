@@ -1,0 +1,24 @@
+{
+  "titulo-valido": {
+    "description": "Corpo conforme Swagger / curl de exemplo",
+    "expectStatus": 201,
+    "deleteAfter": true,
+    "payload": {
+      "title": "Preparar apresentação de vendas"
+    }
+  },
+  "titulo-string-vazia": {
+    "description": "title \"\" — backend atual aceita (BUG-002 / validação fraca)",
+    "expectStatus": 201,
+    "deleteAfter": true,
+    "payload": {
+      "title": ""
+    }
+  },
+  "sem-campos": {
+    "description": "Objeto vazio — falta title obrigatório",
+    "expectStatus": 400,
+    "deleteAfter": false,
+    "payload": {}
+  }
+}

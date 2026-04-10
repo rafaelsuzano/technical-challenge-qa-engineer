@@ -45,6 +45,7 @@ export class TaskListPage {
   async expectEmptyList(): Promise<void> {
     await this.expectLoaded();
     await expect(this.page.getByTestId('task-item')).toHaveCount(0);
-    await expect(this.list).toBeVisible();
+    // <ul> vazio pode ter altura 0; o Playwright não considera “visível”, mas o nó existe no DOM
+    await expect(this.list).toBeAttached();
   }
 }

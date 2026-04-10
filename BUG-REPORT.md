@@ -396,3 +396,118 @@ Sugestão de Correção
 `GET /health` mínimo ou README de operação.
 
 ---
+
+[BUG-016] Permitir várias tarefas com o mesmo título (duplicidade sem aviso)
+
+Severidade: Média  
+Prioridade: P2  
+Componente: Produto | Backend | UX
+
+Descrição  
+Não há validação de unicidade de `title` no `CreateTaskDto` nem índice único na entidade. É possível criar duas ou mais tarefas com texto idêntico, o que confunde listagem, exclusão por “nome” e relatórios.
+
+Passos para Reproduzir  
+1. Criar tarefa manual com título `Comprar leite`.  
+2. Criar outra tarefa manual com o mesmo título `Comprar leite`.
+
+Resultado Esperado  
+Definir regra de produto: bloquear duplicata (com mensagem), sugerir sufixo, ou permitir com aviso explícito.
+
+Resultado Obtido  
+Duas linhas distintas com o mesmo rótulo (IDs diferentes).
+
+Evidência  
+`tasks.service.ts` — `create` sem checagem de duplicidade; entidade `Task` sem constraint única em `title`.
+
+Sugestão de Correção  
+Índice composto ou validação aplicacional; mensagem na UI se duplicata for rejeitada.
+
+---
+
+[BUG-017] Campos de API Key e objetivo da IA vs. criação de tarefa manual
+
+Severidade: Média  
+Prioridade: P2  
+Componente: Frontend | UX
+
+Descrição  
+Relato de uso: ao incluir uma nova tarefa pelo formulário manual, os campos “API Key” e objetivo (“lançar novo produto” / placeholder do bloco de IA) apagariam a cada inclusão. Na implementação atual, `AiGenerator` usa `useState` local e não é desmontado quando `createTask` atualiza a lista — em condições normais esses campos **não** deveriam ser limpos só por adicionar tarefa manual. Se o comportamento ocorrer no browser (ex.: hot reload, erro de layout), tratar como defeito; caso contrário, falta **persistência** entre recargas (chave/objetivo somem ao dar F5).
+
+Passos para Reproduzir  
+1. Preencher API Key e objetivo no bloco “Gerar tarefas com IA”.  
+2. Criar uma tarefa pelo formulário “Adicionar nova tarefa”.  
+3. Observar se API Key e objetivo permanecem.
+
+Resultado Esperado  
+Comportamento previsível: manter valores enquanto a sessão estiver aberta; opcionalmente persistir chave em `sessionStorage` (com cuidado de segurança).
+
+Resultado Obtido  
+Possível perda aparente dos valores ou apenas limpeza do campo de título do formulário manual (comportamento esperado para o título).
+
+Evidência  
+`AiGenerator.tsx` — estado independente de `TaskForm`; `page.tsx` — ambos irmãos sob o mesmo `HomePage`.
+
+Sugestão de Correção  
+Testes E2E cobrindo sequência “preencher IA → criar tarefa manual → campos IA intactos”; se necessário, `sessionStorage` para API key ou mensagem de ajuda esclarecendo o que é limpo.
+
+---
+
+[BUG-018] Exclusão de tarefa sem mensagem de feedback na interface
+
+Severidade: Média  
+Prioridade: P2  
+Componente: Frontend | UX
+
+Descrição  
+Ao clicar em excluir, a tarefa some da lista imediatamente, sem toast, banner, “desfazer” ou diálogo de confirmação. O usuário não recebe confirmação explícita de que a ação foi concluída (além da remoção visual), o que aumenta risco de exclusão acidental.
+
+Passos para Reproduzir  
+1. Criar uma tarefa.  
+2. Clicar no ícone de lixeira.
+
+Resultado Esperado  
+Feedback claro (ex.: toast “Tarefa excluída” com desfazer em 5 s, ou confirmação antes de apagar).
+
+Resultado Obtido  
+Apenas remoção imediata da linha; sem mensagem dedicada.
+
+Evidência  
+`TaskItem.tsx` — `onDelete` direto; sem estado de notificação no `HomePage`/`useTasks`.
+
+Nota  
+[BUG-013] cobre acessibilidade do botão; este item cobre **feedback pós-ação** para usuários videntes.
+
+Sugestão de Correção  
+Toast, `aria-live` para leitores de tela, ou modal de confirmação conforme grau de risco aceito pelo produto.
+
+---
+
+[BUG-019] “Gerar tarefas” com objetivo vazio não exibe mensagem
+
+Severidade: Média  
+Prioridade: P2  
+Componente: Frontend | UX | Acessibilidade
+
+Descrição  
+`handleGenerate` retorna imediatamente se `!objective.trim()`, sem atualizar estado de erro nem mensagem visível. O usuário pode clicar repetidamente em “Gerar tarefas” sem entender por que nada acontece. API Key vazia pode ser aceita pelo backend conforme configuração, mas **objetivo vazio** permanece silencioso na UI.
+
+Passos para Reproduzir  
+1. Deixar o campo de objetivo em branco (e opcionalmente API Key vazia).  
+2. Clicar em “Gerar tarefas”.
+
+Resultado Esperado  
+Mensagem inline ou `aria-live` informando que o objetivo é obrigatório; opcionalmente desabilitar o botão até haver texto válido.
+
+Resultado Obtido  
+Nenhum feedback visual ou por leitor de tela além da ausência de chamada.
+
+Evidência  
+`AiGenerator.tsx` — `if (!objective.trim()) return;` sem UI associada.
+
+Nota  
+Falhas de rede/IA já estão em [BUG-003]; este item é específico para **validação de campos vazios**.
+
+Sugestão de Correção  
+Estado `fieldError`, texto abaixo do campo de objetivo, `aria-invalid`, e `disabled` no botão quando `!objective.trim()`.
+
+---

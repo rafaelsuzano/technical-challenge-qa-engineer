@@ -4,14 +4,17 @@
   "version": "1.0.0",
   "scripts": {
     "test": "playwright test",
+    "test:web": "playwright test tests/web-*.spec.ts tests/task-*.spec.ts tests/empty-state.spec.ts tests/error-handling.spec.ts tests/ai-api-key.spec.ts tests/accessibility.spec.ts",
+    "test:api": "playwright test tests/api-contract.spec.ts tests/api-tasks-post-fixtures.spec.ts tests/api-ai-generate.spec.ts",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
     "@axe-core/playwright": "^4.10.1",
     "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.0",
+    "dotenv": "^16.6.1",
     "typescript": "^5.6.3"
   }
 }

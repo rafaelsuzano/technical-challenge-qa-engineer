@@ -5,27 +5,6 @@ import type { TaskDto } from '../lib/task-types';
 test.describe.configure({ mode: 'serial' });
 
 test.describe('Contrato API /tasks', () => {
-  let createdId: string | undefined;
-
-  test.afterEach(async ({ request }) => {
-    if (createdId) {
-      await request.delete(`${apiBaseURL}/tasks/${createdId}`);
-      createdId = undefined;
-    }
-  });
-
-  test('POST cria tarefa', async ({ request }) => {
-    const title = `[e2e-api] ${Date.now()}`;
-    const res = await request.post(`${apiBaseURL}/tasks`, {
-      data: { title },
-    });
-    expect(res.status()).toBe(201);
-    const body = (await res.json()) as TaskDto;
-    expect(body.title).toBe(title);
-    expect(body.id).toBeTruthy();
-    createdId = body.id;
-  });
-
   test('GET lista tarefas', async ({ request }) => {
     const res = await request.get(`${apiBaseURL}/tasks`);
     expect(res.ok()).toBeTruthy();
@@ -36,6 +15,7 @@ test.describe('Contrato API /tasks', () => {
   test('DELETE remove tarefa criada', async ({ request }) => {
     const title = `[e2e-api-del] ${Date.now()}`;
     const create = await request.post(`${apiBaseURL}/tasks`, { data: { title } });
+    expect(create.status()).toBe(201);
     const task = (await create.json()) as TaskDto;
     const del = await request.delete(`${apiBaseURL}/tasks/${task.id}`);
     expect(del.status()).toBe(204);
@@ -49,13 +29,6 @@ test.describe('Contrato API /tasks', () => {
       data: '{ "title": "incompleto"',
     });
     expect(res.status()).toBeGreaterThanOrEqual(400);
-  });
-
-  test('POST sem campo title', async ({ request }) => {
-    const res = await request.post(`${apiBaseURL}/tasks`, {
-      data: {},
-    });
-    expect(res.status()).toBe(400);
   });
 
   test('GET id inválido retorna 404', async ({ request }) => {
