@@ -35,6 +35,12 @@ test.describe('Contrato API POST /ai/generate', () => {
     request,
   }) => {
     test.skip(!tokenAIApi, 'Defina tokenAIApi no .env da raiz ou em e2e/.env para este teste.');
+    // Em CI o backend chama OpenRouter; falhas de rede/quota/chave geram 500 e quebram o pipeline.
+    // Opt-in: no workflow, env RUN_OPENROUTER_INTEGRATION=1 + secret com a mesma variável tokenAIApi.
+    test.skip(
+      process.env.CI === 'true' && process.env.RUN_OPENROUTER_INTEGRATION !== '1',
+      'CI: omitido por padrão. Para integração real com OpenRouter, defina RUN_OPENROUTER_INTEGRATION=1 e tokenAIApi válido nos secrets.',
+    );
 
     const res = await request.post(`${apiBaseURL}/ai/generate`, {
       headers: { Accept: '*/*', 'Content-Type': 'application/json' },

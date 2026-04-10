@@ -50,6 +50,7 @@ jobs:
           docker compose logs
           exit 1
 
+      # Integração OpenRouter em api-ai-generate.spec.ts: omitida em CI por padrão (RUN_OPENROUTER_INTEGRATION=1 para opt-in).
       - name: Run Playwright
         working-directory: e2e
         env:
